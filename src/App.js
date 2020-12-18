@@ -36,8 +36,6 @@ const fieldsTypes = [
 // get from backend
 const specialFields = [
   { id: 13, effect: 0, bcg: "red", description: "Game Over!" },
-  // { id: 4, effect: 3, bcg: "orange", description: "Game Over!" },
-  // { id: 7, effect: 2, bcg: "yellow", description: "Game Over!" },
   {
     id: 24,
     effect: 12,
@@ -47,8 +45,6 @@ const specialFields = [
 ];
 class App extends Component {
   state = {
-    // Przenieść ze stanu
-    // dice: ["A", "B", "C", "D", "STOP", "-1"],
     rolledDice: "START",
     winner: null,
     // get from backend?
@@ -95,7 +91,7 @@ class App extends Component {
 
   setNewActivePlayer = (playerIndex) => {
     let players = [...this.state.players];
-    players.map((players) => {
+    players.forEach((players) => {
       players.activeTurn = !players.activeTurn;
     });
   };
@@ -153,14 +149,16 @@ class App extends Component {
   isGameOver = (field) => {
     // Dodać po zamknięciu czyszczenie stanu graczy!
     if (field >= 25) {
-      const win = this.state.players.find((player) => player.activeTurn);
+      const winner = this.state.players.find((player) => !player.activeTurn);
       this.setState({
-        win,
+        winner,
+        rolledDice: "START",
       });
     } else if (field === 0) {
-      const win = this.state.players.find((player) => !player.activeTurn);
+      const winner = this.state.players.find((player) => player.activeTurn);
       this.setState({
-        win,
+        winner,
+        rolledDice: "START",
       });
     }
   };
@@ -176,12 +174,42 @@ class App extends Component {
     });
   };
 
+  newGame = () => {
+    if (this.state.winner !== null) {
+      this.setState({
+        rolledDice: "START",
+        winner: null,
+        // get from backend?
+        players: [
+          {
+            id: 1,
+            name: "Paweł",
+            icon: rook,
+            activeFieldId: 1,
+            diceRollsSum: 0,
+            diceRollsFields: [],
+            activeTurn: true,
+          },
+          {
+            id: 2,
+            name: "Agnieszka",
+            icon: queen,
+            activeFieldId: 1,
+            diceRollsSum: 0,
+            diceRollsFields: [],
+            activeTurn: false,
+          },
+        ],
+      });
+    }
+  };
+
   handleRollDice = () => {
     const index = Math.floor(Math.random() * diceFields.length);
     this.setState({
       rolledDice: diceFields[index],
     });
-
+    this.newGame();
     const activePlayerIndex = this.getActivePlayer();
     const dice = diceFields[index];
     this.setNewActivePlayer(activePlayerIndex);
@@ -196,8 +224,6 @@ class App extends Component {
   componentDidMount() {
     this.paintingSpecialFields();
   }
-
-  componentDidUpdate() {}
 
   render() {
     return (
