@@ -1,3 +1,5 @@
+@import "./index.sass"
+
 .app
     display: flex
     flex-direction: column
@@ -5,7 +7,7 @@
     width: 840px
     padding: 10px 20px
     margin: 10px auto
-    background-color: #eee
+    background-color: $first-color
 
 .header
     width: 100%
@@ -19,3 +21,12 @@
             justify-content: center
         &-legend
             padding: 20px
+
+@media only screen and (max-width: 800px)
+  .body
+    flex-direction: column-reverse
+    &__aside
+        &__dice
+            margin-bottom: 20px
+        &__legend
+            display: none

@@ -6,7 +6,8 @@ const Field = ({ content, groupId, fieldId, players }) => {
   });
   return (
     <div className="field" num={num || 25}>
-      {content} {num || 25}
+      <div className="field__content">{content}</div>
+      <div className="field__numbers">{num || 25}</div>
       <div className="field__players">{playerPawns}</div>
     </div>
   );

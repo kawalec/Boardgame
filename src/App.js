@@ -35,11 +35,11 @@ const fieldsTypes = [
 
 // get from backend
 const specialFields = [
-  { id: 13, effect: 0, bcg: "red", description: "Game Over!" },
+  { id: 13, effect: 0, bcg: "#970C10", description: "Game Over!" },
   {
     id: 24,
     effect: 12,
-    bcg: "blue",
+    bcg: "#4B443C",
     description: "Go to field number 12.",
   },
 ];
@@ -112,8 +112,8 @@ class App extends Component {
   };
 
   calcNewFieldForPlayer = (playerField, dice) => {
-    let y = (playerField - 1) % 4; //fieldId
-    let x = (playerField - y - 1) / 4; //groupId
+    let y = (playerField - 1) % 4;
+    let x = (playerField - y - 1) / 4;
     const index = diceFields.indexOf(dice);
     if (dice === "STOP") {
       return playerField;
@@ -147,7 +147,6 @@ class App extends Component {
   };
 
   isGameOver = (field) => {
-    // Dodać po zamknięciu czyszczenie stanu graczy!
     if (field >= 25) {
       const winner = this.state.players.find((player) => !player.activeTurn);
       this.setState({
@@ -179,7 +178,6 @@ class App extends Component {
       this.setState({
         rolledDice: "START",
         winner: null,
-        // get from backend?
         players: [
           {
             id: 1,
