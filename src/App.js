@@ -139,7 +139,7 @@ class App extends Component {
         </header>
         <main className="body">
           <section className="body__fields">
-            <Board fieldsTypes={fieldsTypes} />
+            <Board fieldsTypes={fieldsTypes} players={this.state.players} />
           </section>
           <section className="body__aside">
             <div className="body__aside-dice">
