@@ -1,5 +1,6 @@
 import "./Board.sass";
 import FieldsGroup from "../FieldsGroup/FieldsGroup";
+import Field from "../Field/Field";
 
 const Board = ({ fieldsTypes }) => {
   const fields = [];
@@ -7,7 +8,12 @@ const Board = ({ fieldsTypes }) => {
     fields.push(<FieldsGroup key={i} fieldsTypes={fieldsTypes} groupId={i} />);
   }
 
-  return fields;
+  return (
+    <>
+      {fields}
+      <Field content={"Meta"} />
+    </>
+  );
 };
 
 export default Board;
