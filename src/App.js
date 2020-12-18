@@ -69,13 +69,6 @@ class App extends Component {
     ],
   };
 
-  handleRollDice = () => {
-    const index = Math.floor(Math.random() * this.state.dice.length);
-    this.setState({
-      rolledDice: this.state.dice[index],
-    });
-  };
-
   paintingSpecialFields = () => {
     const node = document.querySelectorAll(".field");
     const arr = Array.from(node);
@@ -88,9 +81,53 @@ class App extends Component {
     });
   };
 
+  getActivePlayer = () => {
+    const playerIndex = this.state.players.findIndex(
+      (player) => player.activeTurn
+    );
+    return playerIndex;
+  };
+
+  setNewActivePlayer = (playerIndex) => {
+    let players = [...this.state.players];
+    players.map((players) => {
+      players.activeTurn = !players.activeTurn;
+    });
+  };
+
+  addDiceFieldsToPlayers = (playerIndex, dice) => {
+    const players = [...this.state.players];
+    players[playerIndex].diceRollsFields.push(dice);
+  };
+
+  calcSumDiceRollsToPlayers = (playerIndex) => {
+    const players = [...this.state.players];
+    players[playerIndex].diceRollsSum++;
+  };
+
+  getActivePlayerField = (playerIndex) => {
+    const field = this.state.players[playerIndex].activeFieldId;
+    return field;
+  };
+
+  handleRollDice = () => {
+    const index = Math.floor(Math.random() * this.state.dice.length);
+    this.setState({
+      rolledDice: this.state.dice[index],
+    });
+
+    const activePlayerIndex = this.getActivePlayer();
+    const dice = this.state.dice[index];
+    this.setNewActivePlayer(activePlayerIndex);
+    this.addDiceFieldsToPlayers(activePlayerIndex, dice);
+    this.calcSumDiceRollsToPlayers(activePlayerIndex);
+  };
+
   componentDidMount() {
     this.paintingSpecialFields();
   }
+
+  componentDidUpdate() {}
 
   render() {
     return (

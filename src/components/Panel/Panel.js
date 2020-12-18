@@ -1,6 +1,6 @@
 import "./Panel.sass";
-
 const Panel = ({ players, winner }) => {
+  const playerTurn = players.find((player) => player.activeTurn);
   const score = players.map((player) => (
     <li key={player.id}>
       <p>
@@ -52,7 +52,9 @@ const Panel = ({ players, winner }) => {
     <div className="panel">
       <h1 className="panel__title">Board Game</h1>
       <p className="panel__active-player">
-        {winner === null ? null : `Wygrał gracz: ${winner.name}`}
+        {winner === null
+          ? `Tura gracza: ${playerTurn.name}`
+          : `Wygrał gracz: ${winner.name}`}
       </p>
       <ul className="panel__players">{winner === null ? score : winInfo}</ul>
     </div>
