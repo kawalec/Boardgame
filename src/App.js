@@ -60,6 +60,14 @@ class App extends Component {
       },
     ],
   };
+
+  handleRollDice = () => {
+    const index = Math.floor(Math.random() * this.state.dice.length);
+    this.setState({
+      rolledDice: this.state.dice[index],
+    });
+  };
+
   render() {
     return (
       <>
@@ -74,7 +82,10 @@ class App extends Component {
           </section>
           <section className="body__aside">
             <div className="body__aside-dice">
-              <Dice />
+              <Dice
+                click={this.handleRollDice}
+                content={this.state.rolledDice}
+              />
             </div>
             <div className="body__aside-legend">
               <Legend />
