@@ -6,9 +6,8 @@ import Panel from "./components/Panel/Panel";
 import Board from "./components/Board/Board";
 import Dice from "./components/Dice/Dice";
 import Legend from "./components/Legend/Legend";
-import FieldsGroup from "./components/FieldsGroup/FieldsGroup";
 
-const fields = [
+const fieldsTypes = [
   {
     id: 0,
     name: "A",
@@ -71,7 +70,7 @@ class App extends Component {
         </header>
         <main className="body">
           <section className="body__fields">
-            <FieldsGroup />
+            <Board fieldsTypes={fieldsTypes} />
           </section>
           <section className="body__aside">
             <div className="body__aside-dice">
