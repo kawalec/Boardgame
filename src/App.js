@@ -7,6 +7,12 @@ import Board from "./components/Board/Board";
 import Dice from "./components/Dice/Dice";
 import Legend from "./components/Legend/Legend";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChessRook, faChessQueen } from "@fortawesome/free-solid-svg-icons";
+
+const rook = <FontAwesomeIcon icon={faChessRook} />;
+const queen = <FontAwesomeIcon icon={faChessQueen} />;
+
 const fieldsTypes = [
   {
     id: 0,
@@ -39,12 +45,13 @@ class App extends Component {
   state = {
     dice: ["A", "B", "C", "D", "STOP", "-1"],
     rolledDice: "START",
-    win: null,
+    winner: null,
     // get from backend?
     players: [
       {
         id: 1,
         name: "Paweł",
+        icon: rook,
         activeFieldId: 1,
         diceRollsSum: 0,
         diceRollsFields: [],
@@ -53,6 +60,7 @@ class App extends Component {
       {
         id: 2,
         name: "Agnieszka",
+        icon: queen,
         activeFieldId: 1,
         diceRollsSum: 0,
         diceRollsFields: [],
@@ -73,7 +81,7 @@ class App extends Component {
       <>
         <header className="header">
           <div className="header__panel">
-            <Panel />
+            <Panel players={this.state.players} winner={this.state.winner} />
           </div>
         </header>
         <main className="body">
