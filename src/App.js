@@ -76,6 +76,22 @@ class App extends Component {
     });
   };
 
+  paintingSpecialFields = () => {
+    const node = document.querySelectorAll(".field");
+    const arr = Array.from(node);
+    specialFields.map((special) => {
+      return arr.map((field) =>
+        parseInt(field.attributes.num.value) === special.id
+          ? (field.style.background = special.bcg)
+          : null
+      );
+    });
+  };
+
+  componentDidMount() {
+    this.paintingSpecialFields();
+  }
+
   render() {
     return (
       <div className="app">
