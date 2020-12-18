@@ -13,6 +13,7 @@ import { faChessRook, faChessQueen } from "@fortawesome/free-solid-svg-icons";
 const rook = <FontAwesomeIcon icon={faChessRook} />;
 const queen = <FontAwesomeIcon icon={faChessQueen} />;
 
+const diceFields = ["A", "B", "C", "D", "STOP", "-1"];
 const fieldsTypes = [
   {
     id: 0,
@@ -31,9 +32,12 @@ const fieldsTypes = [
     name: "D",
   },
 ];
+
 // get from backend
 const specialFields = [
   { id: 13, effect: 0, bcg: "red", description: "Game Over!" },
+  // { id: 4, effect: 3, bcg: "orange", description: "Game Over!" },
+  // { id: 7, effect: 2, bcg: "yellow", description: "Game Over!" },
   {
     id: 24,
     effect: 12,
@@ -43,7 +47,8 @@ const specialFields = [
 ];
 class App extends Component {
   state = {
-    dice: ["A", "B", "C", "D", "STOP", "-1"],
+    // Przenieść ze stanu
+    // dice: ["A", "B", "C", "D", "STOP", "-1"],
     rolledDice: "START",
     winner: null,
     // get from backend?
@@ -110,17 +115,82 @@ class App extends Component {
     return field;
   };
 
+  calcNewFieldForPlayer = (playerField, dice) => {
+    let y = (playerField - 1) % 4; //fieldId
+    let x = (playerField - y - 1) / 4; //groupId
+    const index = diceFields.indexOf(dice);
+    if (dice === "STOP") {
+      return playerField;
+    } else if (dice === "-1") {
+      if (x === 0 && y === 0) {
+        return playerField;
+      } else {
+        if (y === 0) {
+          x--;
+          y = y + 3;
+        } else {
+          y--;
+        }
+      }
+      const num = x * 4 + y + 1;
+      return num;
+    } else if (index > y) {
+      y = index;
+    } else {
+      x++;
+      y = index;
+    }
+    const num = x * 4 + y + 1;
+    return num;
+  };
+
+  specialFieldsActions = (oldField) => {
+    const index = specialFields.findIndex((field) => field.id === oldField);
+    const newField = index === -1 ? oldField : specialFields[index].effect;
+    return newField;
+  };
+
+  isGameOver = (field) => {
+    // Dodać po zamknięciu czyszczenie stanu graczy!
+    if (field >= 25) {
+      const win = this.state.players.find((player) => player.activeTurn);
+      this.setState({
+        win,
+      });
+    } else if (field === 0) {
+      const win = this.state.players.find((player) => !player.activeTurn);
+      this.setState({
+        win,
+      });
+    }
+  };
+
+  playGame = (playerField) => {
+    this.isGameOver(playerField);
+    let players = [...this.state.players];
+    players = players.map((player) => {
+      if (!player.activeTurn) {
+        player.activeFieldId = playerField;
+      }
+      return players;
+    });
+  };
+
   handleRollDice = () => {
-    const index = Math.floor(Math.random() * this.state.dice.length);
+    const index = Math.floor(Math.random() * diceFields.length);
     this.setState({
-      rolledDice: this.state.dice[index],
+      rolledDice: diceFields[index],
     });
 
     const activePlayerIndex = this.getActivePlayer();
-    const dice = this.state.dice[index];
+    const dice = diceFields[index];
     this.setNewActivePlayer(activePlayerIndex);
     this.addDiceFieldsToPlayers(activePlayerIndex, dice);
     this.calcSumDiceRollsToPlayers(activePlayerIndex);
+    const playerField = this.getActivePlayerField(activePlayerIndex);
+    const newFields = this.calcNewFieldForPlayer(playerField, dice);
+    const specialFields = this.specialFieldsActions(newFields);
+    this.playGame(specialFields);
   };
 
   componentDidMount() {
