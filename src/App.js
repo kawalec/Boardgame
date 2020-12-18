@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import "./App.css";
+import "./App.sass";
 
 import Panel from "./components/Panel/Panel";
 import Board from "./components/Board/Board";
@@ -78,7 +78,7 @@ class App extends Component {
 
   render() {
     return (
-      <>
+      <div className="app">
         <header className="header">
           <div className="header__panel">
             <Panel players={this.state.players} winner={this.state.winner} />
@@ -96,11 +96,11 @@ class App extends Component {
               />
             </div>
             <div className="body__aside-legend">
-              <Legend />
+              <Legend info={specialFields} />
             </div>
           </section>
         </main>
-      </>
+      </div>
     );
   }
 }
