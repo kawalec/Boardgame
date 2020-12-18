@@ -6,6 +6,7 @@ import Panel from "./components/Panel/Panel";
 import Board from "./components/Board/Board";
 import Dice from "./components/Dice/Dice";
 import Legend from "./components/Legend/Legend";
+import FieldsGroup from "./components/FieldsGroup/FieldsGroup";
 
 const fields = [
   {
@@ -40,7 +41,7 @@ class App extends Component {
     dice: ["A", "B", "C", "D", "STOP", "-1"],
     rolledDice: "START",
     win: null,
-    // get from backend
+    // get from backend?
     players: [
       {
         id: 1,
@@ -61,7 +62,28 @@ class App extends Component {
     ],
   };
   render() {
-    return <Board />;
+    return (
+      <>
+        <header className="header">
+          <div className="header__panel">
+            <Panel />
+          </div>
+        </header>
+        <main className="body">
+          <section className="body__fields">
+            <FieldsGroup />
+          </section>
+          <section className="body__aside">
+            <div className="body__aside-dice">
+              <Dice />
+            </div>
+            <div className="body__aside-legend">
+              <Legend />
+            </div>
+          </section>
+        </main>
+      </>
+    );
   }
 }
 
