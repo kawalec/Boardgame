@@ -1,11 +1,11 @@
 import "./Panel.sass";
-const Panel = ({ players, winner }) => {
+const Panel = ({ players, winner, pawns }) => {
   const playerTurn = players.find((player) => player.activeTurn);
   const score = players.map((player) => (
     <li key={player.id}>
       <p>
         <span className="panel__players-info">
-          <span className="panel__players-icon">{player.icon}</span>
+          <span className="panel__players-icon">{pawns[player.icon]}</span>
           {player.name}
         </span>
         {`Liczba rzutów kostką: ${player.diceRollsSum}`}

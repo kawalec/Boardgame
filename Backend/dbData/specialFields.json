@@ -1,0 +1,14 @@
+[
+  {
+  "id": 13, 
+  "effect": 0,
+  "bcg": "#970C10",
+  "description": "Game Over!"
+  },
+  {
+  "id": 24,
+  "effect": 12,
+  "bcg": "#4B443C",
+  "description": "Go to field number 12."
+  }
+]

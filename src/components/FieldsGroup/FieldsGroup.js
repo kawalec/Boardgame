@@ -1,7 +1,7 @@
 import "./FieldsGroup.sass";
 import Field from "../Field/Field";
 
-const FieldsGroup = ({ fieldsTypes, groupId, players }) => {
+const FieldsGroup = ({ fieldsTypes, groupId, players, pawns }) => {
   const fields = fieldsTypes.map((field, i) => (
     <Field
       key={field.id}
@@ -9,6 +9,7 @@ const FieldsGroup = ({ fieldsTypes, groupId, players }) => {
       groupId={groupId}
       fieldId={i}
       players={players}
+      pawns={pawns}
     />
   ));
 

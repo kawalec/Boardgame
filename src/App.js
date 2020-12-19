@@ -10,8 +10,10 @@ import Legend from "./components/Legend/Legend";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChessRook, faChessQueen } from "@fortawesome/free-solid-svg-icons";
 
-const rook = <FontAwesomeIcon icon={faChessRook} />;
-const queen = <FontAwesomeIcon icon={faChessQueen} />;
+const pawns = [
+  <FontAwesomeIcon icon={faChessRook} />,
+  <FontAwesomeIcon icon={faChessQueen} />,
+];
 
 const diceFields = ["A", "B", "C", "D", "STOP", "-1"];
 const fieldsTypes = [
@@ -32,27 +34,16 @@ const fieldsTypes = [
     name: "D",
   },
 ];
-
-// get from backend
-const specialFields = [
-  { id: 13, effect: 0, bcg: "#970C10", description: "Game Over!" },
-  {
-    id: 24,
-    effect: 12,
-    bcg: "#4B443C",
-    description: "Go to field number 12.",
-  },
-];
 class App extends Component {
   state = {
     rolledDice: "START",
     winner: null,
-    // get from backend?
+    specialFields: [],
     players: [
       {
         id: 1,
-        name: "Paweł",
-        icon: rook,
+        name: "",
+        icon: 0,
         activeFieldId: 1,
         diceRollsSum: 0,
         diceRollsFields: [],
@@ -60,8 +51,8 @@ class App extends Component {
       },
       {
         id: 2,
-        name: "Agnieszka",
-        icon: queen,
+        name: "",
+        icon: 1,
         activeFieldId: 1,
         diceRollsSum: 0,
         diceRollsFields: [],
@@ -70,10 +61,27 @@ class App extends Component {
     ],
   };
 
+  getSpecialFields = () => {
+    fetch("/api/fields")
+      .then((res) => res.json())
+      .then((data) => {
+        this.setState({ specialFields: data });
+        this.paintingSpecialFields();
+      })
+      .catch((err) => console.log(new Error(err)));
+  };
+
+  getPlayers = () => {
+    fetch("/api/players")
+      .then((res) => res.json())
+      .then((data) => this.setState({ players: data }))
+      .catch((err) => console.log(new Error(err)));
+  };
+
   paintingSpecialFields = () => {
     const node = document.querySelectorAll(".field");
     const arr = Array.from(node);
-    specialFields.map((special) => {
+    this.state.specialFields.map((special) => {
       return arr.map((field) =>
         parseInt(field.attributes.num.value) === special.id
           ? (field.style.background = special.bcg)
@@ -141,8 +149,11 @@ class App extends Component {
   };
 
   specialFieldsActions = (oldField) => {
-    const index = specialFields.findIndex((field) => field.id === oldField);
-    const newField = index === -1 ? oldField : specialFields[index].effect;
+    const index = this.state.specialFields.findIndex(
+      (field) => field.id === oldField
+    );
+    const newField =
+      index === -1 ? oldField : this.state.specialFields[index].effect;
     return newField;
   };
 
@@ -181,8 +192,8 @@ class App extends Component {
         players: [
           {
             id: 1,
-            name: "Paweł",
-            icon: rook,
+            name: "",
+            icon: 0,
             activeFieldId: 1,
             diceRollsSum: 0,
             diceRollsFields: [],
@@ -190,8 +201,8 @@ class App extends Component {
           },
           {
             id: 2,
-            name: "Agnieszka",
-            icon: queen,
+            name: "",
+            icon: 1,
             activeFieldId: 1,
             diceRollsSum: 0,
             diceRollsFields: [],
@@ -220,7 +231,8 @@ class App extends Component {
   };
 
   componentDidMount() {
-    this.paintingSpecialFields();
+    this.getPlayers();
+    this.getSpecialFields();
   }
 
   render() {
@@ -228,12 +240,20 @@ class App extends Component {
       <div className="app">
         <header className="header">
           <div className="header__panel">
-            <Panel players={this.state.players} winner={this.state.winner} />
+            <Panel
+              players={this.state.players}
+              winner={this.state.winner}
+              pawns={pawns}
+            />
           </div>
         </header>
         <main className="body">
           <section className="body__fields">
-            <Board fieldsTypes={fieldsTypes} players={this.state.players} />
+            <Board
+              fieldsTypes={fieldsTypes}
+              players={this.state.players}
+              pawns={pawns}
+            />
           </section>
           <section className="body__aside">
             <div className="body__aside-dice">
@@ -243,7 +263,7 @@ class App extends Component {
               />
             </div>
             <div className="body__aside-legend">
-              <Legend info={specialFields} />
+              <Legend info={this.state.specialFields} />
             </div>
           </section>
         </main>
