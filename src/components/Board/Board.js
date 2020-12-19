@@ -2,7 +2,7 @@ import "./Board.sass";
 import FieldsGroup from "../FieldsGroup/FieldsGroup";
 import Field from "../Field/Field";
 
-const Board = ({ fieldsTypes, players }) => {
+const Board = ({ fieldsTypes, players, pawns }) => {
   const fields = [];
   for (let i = 0; i < 6; i++) {
     fields.push(
@@ -11,6 +11,7 @@ const Board = ({ fieldsTypes, players }) => {
         fieldsTypes={fieldsTypes}
         groupId={i}
         players={players}
+        pawns={pawns}
       />
     );
   }
@@ -18,7 +19,7 @@ const Board = ({ fieldsTypes, players }) => {
   return (
     <>
       {fields}
-      <Field content={"Meta"} players={players} />
+      <Field content={"Meta"} players={players} pawns={pawns} />
     </>
   );
 };

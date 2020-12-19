@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "name": "Paweł",
+    "icon": 0,
+    "activeFieldId": 1,
+    "diceRollsSum": 0,
+    "diceRollsFields": [],
+    "activeTurn": true
+  },
+  {
+    "id": 2,
+    "name": "Agnieszka",
+    "icon": 1,
+    "activeFieldId": 1,
+    "diceRollsSum": 0,
+    "diceRollsFields": [],
+    "activeTurn": false
+  }
+]
