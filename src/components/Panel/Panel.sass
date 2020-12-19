@@ -8,11 +8,21 @@
     margin: 0
   &__active-player
     font-size: 1.4em
-    text-align: right
-    margin: 10px 100px 0 0
-  &__players
-    list-style-type: none
+    margin: 0 40px
     padding: 0
+  &__players
+    &-score
+      list-style-type: none
+      height: 180px
+      & li
+        height: 50%
+    &-win
+      list-style-type: none
+      height: 180px
+      display: flex
+      flex-direction: row
+      & li
+        width: 50%
     &-info
       display: inline-block
       width: 150px

@@ -56,7 +56,11 @@ const Panel = ({ players, winner, pawns }) => {
           ? `Tura gracza: ${playerTurn.name}`
           : `Wygrał gracz: ${winner.name}`}
       </p>
-      <ul className="panel__players">{winner === null ? score : winInfo}</ul>
+      {winner === null ? (
+        <ul className="panel__players-score">{score}</ul>
+      ) : (
+        <ul className="panel__players-win">{winInfo}</ul>
+      )}
     </div>
   );
 };

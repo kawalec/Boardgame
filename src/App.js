@@ -210,6 +210,7 @@ class App extends Component {
           },
         ],
       });
+      this.getPlayers();
     }
   };
 
