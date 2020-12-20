@@ -8,11 +8,18 @@ import Dice from "./components/Dice/Dice";
 import Legend from "./components/Legend/Legend";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChessRook, faChessQueen } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChessRook,
+  faChessQueen,
+  faChessBishop,
+  faChessPawn,
+} from "@fortawesome/free-solid-svg-icons";
 
 const pawns = [
   <FontAwesomeIcon icon={faChessRook} />,
   <FontAwesomeIcon icon={faChessQueen} />,
+  <FontAwesomeIcon icon={faChessBishop} />,
+  <FontAwesomeIcon icon={faChessPawn} />,
 ];
 
 const diceFields = ["A", "B", "C", "D", "STOP", "-1"];
@@ -43,8 +50,8 @@ class App extends Component {
       {
         id: 1,
         name: "",
-        icon: 0,
-        activeFieldId: 1,
+        icon: null,
+        activeFieldId: null,
         diceRollsSum: 0,
         diceRollsFields: [],
         activeTurn: true,
@@ -52,8 +59,8 @@ class App extends Component {
       {
         id: 2,
         name: "",
-        icon: 1,
-        activeFieldId: 1,
+        icon: null,
+        activeFieldId: null,
         diceRollsSum: 0,
         diceRollsFields: [],
         activeTurn: false,
@@ -158,13 +165,20 @@ class App extends Component {
   };
 
   isGameOver = (field) => {
+    const isGameOverFields = this.state.specialFields.filter(
+      (over) => over.isOver
+    );
+    const isGameOver =
+      isGameOverFields.findIndex((over) => over.id === field) !== -1
+        ? true
+        : false;
     if (field >= 25) {
       const winner = this.state.players.find((player) => !player.activeTurn);
       this.setState({
         winner,
         rolledDice: "START",
       });
-    } else if (field === 0) {
+    } else if (isGameOver) {
       const winner = this.state.players.find((player) => player.activeTurn);
       this.setState({
         winner,
@@ -193,8 +207,8 @@ class App extends Component {
           {
             id: 1,
             name: "",
-            icon: 0,
-            activeFieldId: 1,
+            icon: null,
+            activeFieldId: null,
             diceRollsSum: 0,
             diceRollsFields: [],
             activeTurn: true,
@@ -202,8 +216,8 @@ class App extends Component {
           {
             id: 2,
             name: "",
-            icon: 1,
-            activeFieldId: 1,
+            icon: null,
+            activeFieldId: null,
             diceRollsSum: 0,
             diceRollsFields: [],
             activeTurn: false,

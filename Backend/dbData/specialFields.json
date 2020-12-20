@@ -1,14 +1,16 @@
 [
   {
   "id": 13, 
-  "effect": 0,
+  "effect": 13,
   "bcg": "#4C5355",
-  "description": "Game Over!"
+  "description": "Game Over!",
+  "isOver": true
   },
   {
   "id": 24,
   "effect": 12,
   "bcg": "#3B707D",
-  "description": "Go to field number 12."
+  "description": "Go to field number 12.",
+  "isOver": false
   }
 ]
