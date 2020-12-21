@@ -2,7 +2,7 @@ import "./Field.sass";
 const Field = ({ content, groupId, fieldId, players, pawns }) => {
   const num = groupId * 4 + fieldId + 1;
   const playerPawns = players.map((player) => {
-    return num === player.activeFieldId ? pawns[player.icon] : null;
+    return (num || 25) === player.activeFieldId ? pawns[player.icon] : null;
   });
   return (
     <div className="field" num={num || 25}>

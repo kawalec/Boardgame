@@ -18,3 +18,9 @@ test("return new fields", () => {
   const newField = app.calcNewFieldForPlayer(1, "B");
   expect(newField).toBe(2);
 });
+
+test("return meta field", () => {
+  const app = new App();
+  const newField = app.specialFieldsActions(26);
+  expect(newField).toBe(25);
+});

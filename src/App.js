@@ -159,8 +159,9 @@ class App extends Component {
     const index = this.state.specialFields.findIndex(
       (field) => field.id === oldField
     );
-    const newField =
+    let newField =
       index === -1 ? oldField : this.state.specialFields[index].effect;
+    newField = newField > 25 ? 25 : newField;
     return newField;
   };
 
