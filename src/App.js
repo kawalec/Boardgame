@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 
 import "./App.sass";
 
@@ -41,54 +41,53 @@ const fieldsTypes = [
     name: "D",
   },
 ];
-class App extends Component {
-  state = {
-    rolledDice: "START",
-    winner: null,
-    specialFields: [],
-    players: [
-      {
-        id: 1,
-        name: "",
-        icon: null,
-        activeFieldId: null,
-        diceRollsSum: 0,
-        diceRollsFields: [],
-        activeTurn: true,
-      },
-      {
-        id: 2,
-        name: "",
-        icon: null,
-        activeFieldId: null,
-        diceRollsSum: 0,
-        diceRollsFields: [],
-        activeTurn: false,
-      },
-    ],
+
+const App = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [rolledDice, setRollDice] = useState("START");
+  const [winner, setWinner] = useState(null);
+  const [specialFields, setSpecialFields] = useState([]);
+  const [players, setPlayers] = useState([]);
+
+  const handleRollDice = () => {
+    const index = Math.floor(Math.random() * diceFields.length);
+    setRollDice(diceFields[index]);
+    newGame();
+    const activePlayerIndex = getActivePlayer();
+    const dice = diceFields[index];
+    setNewActivePlayer();
+    addDiceFieldsToPlayers(activePlayerIndex, dice);
+    calcSumDiceRollsToPlayers(activePlayerIndex);
+    const playerField = getActivePlayerField(activePlayerIndex);
+    const newFields = calcNewFieldForPlayer(playerField, dice);
+    const specialFields = specialFieldsActions(newFields);
+    playGame(specialFields);
   };
 
-  getSpecialFields = () => {
+  const getSpecialFields = () => {
     fetch("/api/fields")
       .then((res) => res.json())
       .then((data) => {
-        this.setState({ specialFields: data });
-        this.paintingSpecialFields();
+        setSpecialFields(data);
+        paintingSpecialFields();
       })
       .catch((err) => console.log(new Error(err)));
   };
 
-  getPlayers = () => {
+  const getPlayers = () => {
     fetch("/api/players")
       .then((res) => res.json())
-      .then((data) => this.setState({ players: data }))
+      .then((data) => {
+        setPlayers(data);
+        setIsLoaded(true);
+      })
       .catch((err) => console.log(new Error(err)));
   };
 
-  paintingSpecialFields = () => {
+  const paintingSpecialFields = () => {
     const node = document.querySelectorAll(".field");
     const arr = Array.from(node);
-    this.state.specialFields.map((special) => {
+    specialFields.map((special) => {
       return arr.map((field) =>
         parseInt(field.attributes.num.value) === special.id
           ? (field.style.background = special.bcg)
@@ -97,36 +96,41 @@ class App extends Component {
     });
   };
 
-  getActivePlayer = () => {
-    const playerIndex = this.state.players.findIndex(
-      (player) => player.activeTurn
-    );
+  useEffect(() => {
+    getPlayers();
+    getSpecialFields();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const getActivePlayer = () => {
+    const playerIndex = players.findIndex((player) => player.activeTurn);
     return playerIndex;
   };
 
-  setNewActivePlayer = (playerIndex) => {
-    let players = [...this.state.players];
-    players.forEach((players) => {
-      players.activeTurn = !players.activeTurn;
+  const setNewActivePlayer = () => {
+    const togglePlayers = [...players];
+    togglePlayers.forEach((player) => {
+      player.activeTurn = !player.activeTurn;
     });
+    setPlayers(togglePlayers);
   };
 
-  addDiceFieldsToPlayers = (playerIndex, dice) => {
-    const players = [...this.state.players];
-    players[playerIndex].diceRollsFields.push(dice);
+  const addDiceFieldsToPlayers = (playerIndex, dice) => {
+    const newPlayers = [...players];
+    const playerRolls = [...players[playerIndex].diceRollsFields, dice];
+    newPlayers[playerIndex].diceRollsFields = playerRolls;
+    setPlayers(newPlayers);
   };
 
-  calcSumDiceRollsToPlayers = (playerIndex) => {
-    const players = [...this.state.players];
+  const calcSumDiceRollsToPlayers = (playerIndex) => {
     players[playerIndex].diceRollsSum++;
   };
 
-  getActivePlayerField = (playerIndex) => {
-    const field = this.state.players[playerIndex].activeFieldId;
+  const getActivePlayerField = (playerIndex) => {
+    const field = players[playerIndex].activeFieldId;
     return field;
   };
 
-  calcNewFieldForPlayer = (playerField, dice) => {
+  const calcNewFieldForPlayer = (playerField, dice) => {
     let y = (playerField - 1) % 4;
     let x = (playerField - y - 1) / 4;
     const index = diceFields.indexOf(dice);
@@ -155,137 +159,79 @@ class App extends Component {
     return num;
   };
 
-  specialFieldsActions = (oldField) => {
-    const index = this.state.specialFields.findIndex(
-      (field) => field.id === oldField
-    );
-    let newField =
-      index === -1 ? oldField : this.state.specialFields[index].effect;
+  const specialFieldsActions = (oldField) => {
+    const index = specialFields.findIndex((field) => field.id === oldField);
+    let newField = index === -1 ? oldField : specialFields[index].effect;
     newField = newField > 25 ? 25 : newField;
     return newField;
   };
 
-  isGameOver = (field) => {
-    const isGameOverFields = this.state.specialFields.filter(
-      (over) => over.isOver
-    );
+  const isGameOver = (field) => {
+    const isGameOverFields = specialFields.filter((over) => over.isOver);
     const isGameOver =
       isGameOverFields.findIndex((over) => over.id === field) !== -1
         ? true
         : false;
     if (field >= 25) {
-      const winner = this.state.players.find((player) => !player.activeTurn);
-      this.setState({
-        winner,
-        rolledDice: "START",
-      });
+      const winner = players.find((player) => !player.activeTurn);
+      setRollDice("START");
+      setWinner(winner);
     } else if (isGameOver) {
-      const winner = this.state.players.find((player) => player.activeTurn);
-      this.setState({
-        winner,
-        rolledDice: "START",
-      });
+      const winner = players.find((player) => player.activeTurn);
+      setRollDice("START");
+      setWinner(winner);
     }
   };
 
-  playGame = (playerField) => {
-    this.isGameOver(playerField);
-    let players = [...this.state.players];
-    players = players.map((player) => {
+  const playGame = (playerField) => {
+    isGameOver(playerField);
+    let players2;
+    players2 = players.map((player) => {
       if (!player.activeTurn) {
         player.activeFieldId = playerField;
       }
-      return players;
+      return players2;
     });
   };
 
-  newGame = () => {
-    if (this.state.winner !== null) {
-      this.setState({
-        rolledDice: "START",
-        winner: null,
-        players: [
-          {
-            id: 1,
-            name: "",
-            icon: null,
-            activeFieldId: null,
-            diceRollsSum: 0,
-            diceRollsFields: [],
-            activeTurn: true,
-          },
-          {
-            id: 2,
-            name: "",
-            icon: null,
-            activeFieldId: null,
-            diceRollsSum: 0,
-            diceRollsFields: [],
-            activeTurn: false,
-          },
-        ],
-      });
-      this.getPlayers();
+  const newGame = () => {
+    if (winner !== null) {
+      setRollDice("START");
+      setWinner(null);
+      setIsLoaded(false);
+      setPlayers([]);
+
+      getPlayers();
     }
   };
 
-  handleRollDice = () => {
-    const index = Math.floor(Math.random() * diceFields.length);
-    this.setState({
-      rolledDice: diceFields[index],
-    });
-    this.newGame();
-    const activePlayerIndex = this.getActivePlayer();
-    const dice = diceFields[index];
-    this.setNewActivePlayer(activePlayerIndex);
-    this.addDiceFieldsToPlayers(activePlayerIndex, dice);
-    this.calcSumDiceRollsToPlayers(activePlayerIndex);
-    const playerField = this.getActivePlayerField(activePlayerIndex);
-    const newFields = this.calcNewFieldForPlayer(playerField, dice);
-    const specialFields = this.specialFieldsActions(newFields);
-    this.playGame(specialFields);
-  };
-
-  componentDidMount() {
-    this.getPlayers();
-    this.getSpecialFields();
-  }
-
-  render() {
-    return (
-      <div className="app">
-        <header className="header">
-          <div className="header__panel">
-            <Panel
-              players={this.state.players}
-              winner={this.state.winner}
-              pawns={pawns}
-            />
+  return (
+    <div className="app">
+      <header className="header">
+        <div className="header__panel">
+          <Panel
+            players={players}
+            winner={winner}
+            pawns={pawns}
+            isLoaded={isLoaded}
+          />
+        </div>
+      </header>
+      <main className="body">
+        <section className="body__fields">
+          <Board fieldsTypes={fieldsTypes} players={players} pawns={pawns} />
+        </section>
+        <section className="body__aside">
+          <div className="body__aside-dice">
+            <Dice click={handleRollDice} content={rolledDice} />
           </div>
-        </header>
-        <main className="body">
-          <section className="body__fields">
-            <Board
-              fieldsTypes={fieldsTypes}
-              players={this.state.players}
-              pawns={pawns}
-            />
-          </section>
-          <section className="body__aside">
-            <div className="body__aside-dice">
-              <Dice
-                click={this.handleRollDice}
-                content={this.state.rolledDice}
-              />
-            </div>
-            <div className="body__aside-legend">
-              <Legend info={this.state.specialFields} />
-            </div>
-          </section>
-        </main>
-      </div>
-    );
-  }
-}
+          <div className="body__aside-legend">
+            <Legend info={specialFields} />
+          </div>
+        </section>
+      </main>
+    </div>
+  );
+};
 
 export default App;

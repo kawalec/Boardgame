@@ -1,6 +1,7 @@
 import "./Panel.sass";
-const Panel = ({ players, winner, pawns }) => {
+const Panel = ({ players, winner, pawns, isLoaded }) => {
   const playerTurn = players.find((player) => player.activeTurn);
+
   const score = players.map((player) => (
     <li key={player.id}>
       <p>
@@ -13,6 +14,12 @@ const Panel = ({ players, winner, pawns }) => {
       <p>Losowania: {player.diceRollsFields.join(", ")}</p>
     </li>
   ));
+
+  const playerInfo = isLoaded
+    ? winner === null
+      ? `Tura gracza: ${playerTurn.name}`
+      : `Wygrał gracz: ${winner.name}`
+    : "Loading...";
 
   const winInfo = players.map((player) => (
     <li key={player.id}>
@@ -51,11 +58,7 @@ const Panel = ({ players, winner, pawns }) => {
   return (
     <div className="panel">
       <h1 className="panel__title">Board Game</h1>
-      <p className="panel__active-player">
-        {winner === null
-          ? `Tura gracza: ${playerTurn.name}`
-          : `Wygrał gracz: ${winner.name}`}
-      </p>
+      <p className="panel__active-player">{playerInfo}</p>
       {winner === null ? (
         <ul className="panel__players-score">{score}</ul>
       ) : (
